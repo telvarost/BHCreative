@@ -83,7 +83,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 		remap = false,
 		shift = Shift.AFTER
 	))
-	private void creative_renderBackgroundEnd(float f, CallbackInfo info) {
+	private void creative_renderBackgroundEnd(float delta, CallbackInfo info) {
 		if (!(creative_isInCreative() && creative_normalGUI)) {
 			return;
 		}
@@ -122,7 +122,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 	}
 	
 	@Inject(method = "renderContainerBackground", at = @At("HEAD"), cancellable = true)
-	private void creative_renderBackgroundStart(float f, CallbackInfo info) {
+	private void creative_renderBackgroundStart(float delta, CallbackInfo info) {
 		if (!creative_isInCreative()) {
 			return;
 		}
