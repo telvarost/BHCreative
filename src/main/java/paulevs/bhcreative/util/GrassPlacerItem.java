@@ -12,8 +12,8 @@ public class GrassPlacerItem extends BlockStateItem {
 	private final int meta;
 	
 	public GrassPlacerItem(Identifier identifier, int meta) {
-		super(identifier, Block.TALLGRASS.getDefaultState());
-		setTranslationKey(identifier.toString());
+		super(identifier, Block.TALL_GRASS.getDefaultState());
+		setTranslationKey(identifier);
 		this.meta = meta;
 	}
 	

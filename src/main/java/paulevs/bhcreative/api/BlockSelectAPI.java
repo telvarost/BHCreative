@@ -61,10 +61,10 @@ public class BlockSelectAPI {
 			Item item = Block.SAPLING.asItem();
 			return new ItemStack(item, 1, meta & 3);
 		});
-		registerConverter(Block.TALLGRASS, (state, meta) -> {
+		registerConverter(Block.TALL_GRASS, (state, meta) -> {
 			Item item = CommonInitListener.tallGrass;
 			switch (meta & 3) {
-				case 0 -> item = Block.DEADBUSH.asItem();
+				case 0 -> item = Block.DEAD_BUSH.asItem();
 				case 2 -> item = CommonInitListener.fern;
 			}
 			return new ItemStack(item);

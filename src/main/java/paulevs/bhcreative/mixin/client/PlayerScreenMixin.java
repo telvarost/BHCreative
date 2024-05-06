@@ -11,8 +11,9 @@ import net.minecraft.entity.living.player.PlayerEntity;
 import net.minecraft.inventory.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.maths.MathHelper;
+import net.minecraft.util.maths.MCMath;
 import net.modificationstation.stationapi.api.network.packet.PacketHelper;
+import net.modificationstation.stationapi.api.util.math.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -34,8 +35,8 @@ import java.util.List;
 public abstract class PlayerScreenMixin extends ContainerScreen {
 	@Unique private static final int CREATIVE_COLOR_FILLER = MHelper.getColor(198, 198, 198, 128);
 	@Unique private static final ItemRenderer CREATIVE_ITEM_RENDERER = new ItemRenderer();
-	@Unique private static final String CREATIVE_KEY_INVENTORY = "title.bhcreative:selectGame.inventory";
-	@Unique private static final String CREATIVE_KEY_CREATIVE = "title.bhcreative:selectGame.creative";
+	@Unique private static final String CREATIVE_KEY_INVENTORY = "title.bhcreative.selectGame.inventory";
+	@Unique private static final String CREATIVE_KEY_CREATIVE = "title.bhcreative.selectGame.creative";
 	
 	@Unique private List<ItemStack> creative_items;
 	@Unique private boolean creative_normalGUI;
@@ -161,7 +162,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 			}
 			
 			int sliderX = posX + 154;
-			int sliderY = posY + 14 + MathHelper.floor(creative_slider * 109);
+			int sliderY = posY + 14 + MCMath.floor(creative_slider * 109);
 			this.blit(sliderX, sliderY, 240, 1, 14, 15);
 			
 			this.blit(posX + 4 + creative_tabIndex * 24, posY - 21, 176, 0, 24, 24);
@@ -206,9 +207,9 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 			String translated = creative_translate(creative_tabKey);
 			this.textManager.drawText(translated, posX + 8, posY + 5, 0x373737);
 			
-			int slotX = MathHelper.floor((mouseX - posX - 8) / 18);
+			int slotX = MCMath.floor((mouseX - posX - 8) / 18);
 			if (slotX >= 0) {
-				int slotY = MathHelper.floor((mouseY - posY - 14) / 18);
+				int slotY = MCMath.floor((mouseY - posY - 14) / 18);
 				if (slotX < 8 && slotY >= 0 && slotY < 7) {
 					int x = slotX * 18 + posX + 8;
 					int y = slotY * 18 + posY + 14;
@@ -220,7 +221,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 					GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 					creative_renderName(item);
 				}
-				slotY = MathHelper.floor((mouseY - posY - 142) / 18);
+				slotY = MCMath.floor((mouseY - posY - 142) / 18);
 				if (slotX < 9 && slotY == 0) {
 					int x = slotX * 18 + posX + 8;
 					int y = posY + 142;
@@ -441,15 +442,15 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 			}
 			
 			int sliderX = mouseX - posX - 154;
-			int sliderY = mouseY - posY - 14 - MathHelper.floor(creative_slider * 109);
+			int sliderY = mouseY - posY - 14 - MCMath.floor(creative_slider * 109);
 			if (sliderX > 0 && sliderX < 14 && sliderY > 0 && sliderY < 15) {
 				creative_mouseDelta = posY + 14 + sliderY;
 				creative_drag = true;
 				return;
 			}
 			
-			int slotX = MathHelper.floor((mouseX - posX - 8) / 18F);
-			int slotY = MathHelper.floor((mouseY - posY - 14) / 18F);
+			int slotX = MCMath.floor((mouseX - posX - 8) / 18F);
+			int slotY = MCMath.floor((mouseY - posY - 14) / 18F);
 			
 			PlayerInventory inventory = this.minecraft.player.inventory;
 			if (slotY >= 0 && slotY < 7 && slotX >= 0 && slotX < 8) {
@@ -521,9 +522,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 		}
 		if (creative_drag) {
 			int mousePos = (int) mouseY - creative_mouseDelta;
-			creative_slider = net.modificationstation.stationapi.api.util.math.MathHelper.clamp(
-				(float) mousePos / 109F, 0.0F, 1.0F
-			);
+			creative_slider = MathHelper.clamp((float) mousePos / 109F, 0.0F, 1.0F);
 			creative_rowIndex = (int) ((creative_slider * creative_maxIndex) / 8.0F) << 3;
 			if (creative_rowIndex > creative_maxIndex) {
 				creative_rowIndex = creative_maxIndex;

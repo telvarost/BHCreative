@@ -33,12 +33,12 @@ public abstract class AbstractClientPlayerMixin extends PlayerEntity {
 		}
 	}
 	
-	@Inject(method = "method_136", at = @At("HEAD"))
-	public void creative_onKeyPress(int i, boolean flag, CallbackInfo info) {
-		if (i != minecraft.options.jumpKey.key) return;
+	@Inject(method = "onKeyPressed(IZ)V", at = @At("HEAD"))
+	public void creative_onKeyPress(int key, boolean pressed, CallbackInfo info) {
+		if (key != minecraft.options.jumpKey.key) return;
 		if (!creative_isCreative()) return;
 		
-		if (flag) {
+		if (pressed) {
 			long time = System.currentTimeMillis();
 			creative_timeout = time - creative_timeout;
 			if (creative_count > 0 && creative_timeout < 500) {

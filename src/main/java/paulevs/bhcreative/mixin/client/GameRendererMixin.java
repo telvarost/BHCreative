@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GameRendererMixin {
 	@Shadow private Minecraft minecraft;
 	
-	@Inject(method = "method_1850(F)V", at = @At("HEAD"), cancellable = true)
-	private void creative_cancelBobbing(float f, CallbackInfo info) {
+	@Inject(method = "applyBobbing", at = @At("HEAD"), cancellable = true)
+	private void creative_cancelBobbing(float delta, CallbackInfo info) {
 		if (minecraft.viewEntity instanceof PlayerEntity player) {
 			if (player.creative_isCreative() && player.creative_isFlying()) {
 				info.cancel();

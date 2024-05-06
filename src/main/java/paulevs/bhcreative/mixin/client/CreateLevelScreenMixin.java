@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CreateLevelScreen.class)
 public abstract class CreateLevelScreenMixin extends Screen {
-	@Unique private static final String CREATIVE_KEY_SURVIVAL = "title.bhcreative:selectWorld.survival";
-	@Unique private static final String CREATIVE_KEY_CREATIVE = "title.bhcreative:selectWorld.creative";
+	@Unique private static final String CREATIVE_KEY_SURVIVAL = "title.bhcreative.selectWorld.survival";
+	@Unique private static final String CREATIVE_KEY_CREATIVE = "title.bhcreative.selectWorld.creative";
 	@Unique private boolean creative = false;
 	
 	@SuppressWarnings("unchecked")
