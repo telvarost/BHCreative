@@ -12,11 +12,13 @@ import net.minecraft.inventory.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.maths.MCMath;
+import net.modificationstation.stationapi.api.client.item.CustomTooltipProvider;
 import net.modificationstation.stationapi.api.network.packet.PacketHelper;
 import net.modificationstation.stationapi.api.util.math.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -101,7 +103,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 		RenderHelper.enableLighting();
 		GL11.glPopMatrix();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glEnable(32826);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		
 		creative_renderItem(creative_creativeIcon, posX + 173 + 4, posY + 114 + 4);
 		creative_renderItem(creative_survivalIcon, posX + 173 + 4, posY + 138 + 4);
@@ -172,7 +174,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 			RenderHelper.enableLighting();
 			GL11.glPopMatrix();
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			GL11.glEnable(32826);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			
 			creative_renderItem(creative_creativeIcon, posX + 173 + 4, posY + 114 + 4);
 			creative_renderItem(creative_survivalIcon, posX + 173 + 4, posY + 138 + 4);
@@ -259,12 +261,16 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 	
 	@Unique
 	private void creative_renderName(ItemStack item) {
-		if (item == null) {
-			return;
-		}
+		if (item == null) return;
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		String key = item.getTranslationKey();
-		creative_renderString(creative_translate_2(key));
+		String name = creative_translate_2(item.getTranslationKey());
+		if (item.getType() instanceof CustomTooltipProvider provider) {
+			String[] tooltip = provider.getTooltip(item, name);
+			creative_renderStrings(tooltip);
+		}
+		else {
+			creative_renderString(name);
+		}
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 	
@@ -274,11 +280,33 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 		
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		
-		int var9 = (int) mouseX + 12;
-		int var10 = (int) mouseY - 12;
-		int var11 = this.textManager.getTextWidth(string);
-		this.fillGradient(var9 - 3, var10 - 3, var9 + var11 + 3, var10 + 8 + 3, -1073741824, -1073741824);
-		this.textManager.drawTextWithShadow(string, var9, var10, -1);
+		int x = (int) mouseX + 12;
+		int y = (int) mouseY - 12;
+		int width = this.textManager.getTextWidth(string);
+		this.fillGradient(x - 3, y - 3, x + width + 3, y + 8 + 3, -1073741824, -1073741824);
+		this.textManager.drawTextWithShadow(string, x, y, -1);
+		
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+	
+	@Unique
+	private void creative_renderStrings(String[] strings) {
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		
+		int x = (int) mouseX + 12;
+		int y = (int) mouseY - 12;
+		int width = 0;
+		
+		for (String line : strings) {
+			width = Math.max(width, this.textManager.getTextWidth(line));
+		}
+		
+		this.fillGradient(x - 3, y - 3, x + width + 3, y + 8 + 3 + (strings.length - 1) * 12, -1073741824, -1073741824);
+		
+		for (int i = 0; i < strings.length; i++) {
+			this.textManager.drawTextWithShadow(strings[i], x, y + i * 12, -1);
+			width = Math.max(width, this.textManager.getTextWidth(strings[i]));
+		}
 		
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
@@ -306,11 +334,11 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 	
 	@Unique
 	private void creative_renderSlotOverlay(int x, int y) {
-		GL11.glDisable(2896);
-		GL11.glDisable(2929);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		this.fillGradient(x, y, x + 16, y + 16, -2130706433, -2130706433);
-		GL11.glEnable(2896);
-		GL11.glEnable(2929);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 	
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
@@ -331,7 +359,7 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float)posX, (float)posY, 0.0F);
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			GL11.glEnable(32826);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 	
 			PlayerInventory inventory = this.minecraft.player.inventory;
 			if (inventory.getCursorItem() != null) {
@@ -340,15 +368,15 @@ public abstract class PlayerScreenMixin extends ContainerScreen {
 				CREATIVE_ITEM_RENDERER.renderStackInGUIWithDamage(this.textManager, this.minecraft.textureManager, inventory.getCursorItem(), mouseX - posX - 8, mouseY - posY - 8);
 			}
 	
-			GL11.glDisable(32826);
+			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 			RenderHelper.disableLighting();
-			GL11.glDisable(2896);
-			GL11.glDisable(2929);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
 			this.renderForeground();
 	
 			GL11.glPopMatrix();
-			GL11.glEnable(2896);
-			GL11.glEnable(2929);
+			GL11.glEnable(GL11.GL_LIGHTING);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			
 			this.mouseX = (float) mouseX;
 			this.mouseY = (float) mouseY;
