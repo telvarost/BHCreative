@@ -17,7 +17,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class IsFlyingPacket extends AbstractPacket implements ManagedPacket<IsFlyingPacket> {
-	public static final PacketType<IsFlyingPacket> TYPE = PacketType.builder(false, true, IsFlyingPacket::new).build();
+	public static final PacketType<IsFlyingPacket> TYPE = PacketType.builder(true, true, IsFlyingPacket::new).build();
 	private static final String STATION_ID = StationAPI.NAMESPACE.id("id").toString();
 	private static final Identifier ID = BHCreative.id("is_flying");
 	private boolean flight;

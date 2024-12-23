@@ -18,7 +18,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class SlotUpdatePacket extends AbstractPacket implements ManagedPacket<SlotUpdatePacket> {
-	public static final PacketType<SlotUpdatePacket> TYPE = PacketType.builder(false, true, SlotUpdatePacket::new).build();
+	public static final PacketType<SlotUpdatePacket> TYPE = PacketType.builder(true, true, SlotUpdatePacket::new).build();
 	private static final String STATION_ID = StationAPI.NAMESPACE.id("id").toString();
 	private static final Identifier ID = BHCreative.id("update_slot");
 	private int slot;
