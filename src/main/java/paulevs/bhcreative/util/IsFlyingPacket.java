@@ -4,8 +4,11 @@ import net.minecraft.entity.living.player.ServerPlayer;
 import net.minecraft.packet.AbstractPacket;
 import net.minecraft.packet.PacketHandler;
 import net.minecraft.server.network.ServerPlayerPacketHandler;
-import net.modificationstation.stationapi.api.network.packet.IdentifiablePacket;
+import net.modificationstation.stationapi.api.StationAPI;
+import net.modificationstation.stationapi.api.network.packet.ManagedPacket;
+import net.modificationstation.stationapi.api.network.packet.PacketType;
 import net.modificationstation.stationapi.api.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import paulevs.bhcreative.BHCreative;
 import paulevs.bhcreative.mixin.server.ServerPlayerPacketHandlerAccessor;
 
@@ -13,7 +16,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class IsFlyingPacket extends AbstractPacket implements IdentifiablePacket {
+public class IsFlyingPacket extends AbstractPacket implements ManagedPacket<IsFlyingPacket> {
+	public static final PacketType<IsFlyingPacket> TYPE = PacketType.builder(true, true, IsFlyingPacket::new).build();
+	private static final String STATION_ID = StationAPI.NAMESPACE.id("id").toString();
 	private static final Identifier ID = BHCreative.id("is_flying");
 	private boolean flight;
 	
@@ -56,13 +61,9 @@ public class IsFlyingPacket extends AbstractPacket implements IdentifiablePacket
 	public int length() {
 		return 1;
 	}
-	
+
 	@Override
-	public Identifier getId() {
-		return ID;
-	}
-	
-	public static void register() {
-		IdentifiablePacket.register(ID, true, true, IsFlyingPacket::new);
+	public @NotNull PacketType<IsFlyingPacket> getType() {
+		return TYPE;
 	}
 }

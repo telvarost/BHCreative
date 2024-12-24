@@ -5,8 +5,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.packet.AbstractPacket;
 import net.minecraft.packet.PacketHandler;
 import net.minecraft.server.network.ServerPlayerPacketHandler;
-import net.modificationstation.stationapi.api.network.packet.IdentifiablePacket;
+import net.modificationstation.stationapi.api.StationAPI;
+import net.modificationstation.stationapi.api.network.packet.ManagedPacket;
+import net.modificationstation.stationapi.api.network.packet.PacketType;
 import net.modificationstation.stationapi.api.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 import paulevs.bhcreative.BHCreative;
 import paulevs.bhcreative.mixin.server.ServerPlayerPacketHandlerAccessor;
 
@@ -14,7 +17,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class SlotUpdatePacket extends AbstractPacket implements IdentifiablePacket {
+public class SlotUpdatePacket extends AbstractPacket implements ManagedPacket<SlotUpdatePacket> {
+	public static final PacketType<SlotUpdatePacket> TYPE = PacketType.builder(true, true, SlotUpdatePacket::new).build();
+	private static final String STATION_ID = StationAPI.NAMESPACE.id("id").toString();
 	private static final Identifier ID = BHCreative.id("update_slot");
 	private int slot;
 	private ItemStack stack;
@@ -76,13 +81,9 @@ public class SlotUpdatePacket extends AbstractPacket implements IdentifiablePack
 	public int length() {
 		return 11;
 	}
-	
+
 	@Override
-	public Identifier getId() {
-		return ID;
-	}
-	
-	public static void register() {
-		IdentifiablePacket.register(ID, true, true, SlotUpdatePacket::new);
+	public @NotNull PacketType<SlotUpdatePacket> getType() {
+		return TYPE;
 	}
 }

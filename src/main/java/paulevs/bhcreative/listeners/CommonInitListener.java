@@ -2,7 +2,10 @@ package paulevs.bhcreative.listeners;
 
 import net.mine_diver.unsafeevents.listener.EventListener;
 import net.minecraft.block.Block;
+import net.modificationstation.stationapi.api.event.network.packet.PacketRegisterEvent;
 import net.modificationstation.stationapi.api.event.registry.ItemRegistryEvent;
+import net.modificationstation.stationapi.api.registry.PacketTypeRegistry;
+import net.modificationstation.stationapi.api.registry.Registry;
 import paulevs.bhcreative.BHCreative;
 import paulevs.bhcreative.util.GrassPlacerItem;
 import paulevs.bhcreative.util.IsFlyingPacket;
@@ -17,7 +20,11 @@ public class CommonInitListener {
 		tallGrass = new GrassPlacerItem(BHCreative.id("tall_grass"), 1);
 		fern = new GrassPlacerItem(BHCreative.id("fern"), 2);
 		Block.DEAD_BUSH.setTranslationKey(BHCreative.id("dead_bush").toString());
-		SlotUpdatePacket.register();
-		IsFlyingPacket.register();
+	}
+
+	@EventListener
+	public static void registerPackets(PacketRegisterEvent event){
+		Registry.register(PacketTypeRegistry.INSTANCE, BHCreative.NAMESPACE.id("is_flying"), IsFlyingPacket.TYPE);
+		Registry.register(PacketTypeRegistry.INSTANCE, BHCreative.NAMESPACE.id("update_slot"), SlotUpdatePacket.TYPE);
 	}
 }
